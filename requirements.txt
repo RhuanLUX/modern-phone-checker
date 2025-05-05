@@ -10,7 +10,8 @@ aiohttp-client-cache==0.8.2
 click==8.1.7
 
 # Validation des données
-pydantic==2.4.2
+pydantic==1.10.13
+# pydantic==2.4.2 Revoved for now, as it is not compatible!
 typing-extensions==4.8.0
 
 # Affichage console
