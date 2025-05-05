@@ -1,28 +1,29 @@
-# 📓 DEVLOG – Modern Phone Checker
+# 📘 DEVLOG – Modern Phone Checker
 
-## 📅 Dia 1 – 05 de Maio de 2025
+## 📅 Day 1 – May 5, 2025
 
-### ✅ Avanços técnicos:
-- Instalado Python 3.13.2
-- Ambiente virtual criado e ativado (`.\venv\Scripts\activate`)
-- Instalado Rust para compilar pacotes Python avançados
-- Substituído `pydantic==2.4.2` por `pydantic==1.10.13` por compatibilidade
-- Criado `requirements.txt` limpo e funcional
-- Instaladas as dependências corretamente
-- Git configurado com `user.name` e `user.email`
-- Primeiro commit e push realizados no repositório forkado
+### ✅ Technical Progress:
+
+- Installed Python 3.13.2  
+- Created and activated virtual environment (`.\venv\Scripts\activate`)  
+- Installed Rust to compile advanced Python packages  
+- Replaced `pydantic==2.4.2` with `pydantic==1.10.13` for compatibility  
+- Created a clean and functional `requirements.txt`  
+- Successfully installed all dependencies  
+- Configured Git with `user.name` and `user.email`  
+- First commit and push completed to forked repository  
 
 ---
 
-### 🧠 Comandos Git e Python usados:
+### 🌐 Git and Python Commands Used:
 
-| Comando | Descrição |
-|--------|-----------|
-| `python -m venv venv` | Cria o ambiente virtual. |
-| `.\venv\Scripts\activate` | Ativa o ambiente virtual no Windows. |
-| `pip install -r requirements.txt` | Instala as dependências. |
-| `git config --global user.name "Seu Nome"` | Define o nome no Git. |
-| `git config --global user.email "email@email.com"` | Define o e-mail no Git. |
-| `git add .` | Prepara todos os arquivos modificados para commit. |
-| `git commit -m "mensagem"` | Salva o commit com mensagem. |
-| `git push origin main` | Envia os commits para o GitHub. |
+| Command | Description |
+|--------|-------------|
+| `python -m venv venv` | Creates the virtual environment. |
+| `.\venv\Scripts\activate` | Activates the virtual environment on Windows. |
+| `pip install -r requirements.txt` | Installs the dependencies. |
+| `git config --global user.name "Your Name"` | Sets the Git user name. |
+| `git config --global user.email "email@example.com"` | Sets the Git email address. |
+| `git add .` | Stages all modified files for commit. |
+| `git commit -m "message"` | Saves a commit with a message. |
+| `git push origin main` | Sends the commits to GitHub. |
