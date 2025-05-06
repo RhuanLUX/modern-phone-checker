@@ -23,17 +23,17 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     try {
       const parsedNumber = phoneUtil.parse(phoneNumber, country);
       const isValid = phoneUtil.isValidNumber(parsedNumber);
-      setError(isValid ? '' : 'Numéro de téléphone invalide');
+      setError(isValid ? '' : 'Invalid phone number');
       onChange(phoneNumber, isValid);
     } catch (e) {
-      setError('Format de numéro incorrect');
+      setError('Incorrect number format');
       onChange(phoneNumber, false);
     }
   };
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="phone">Numéro de téléphone</Label>
+      <Label htmlFor="phone">Phone Number</Label>
       <Input
         id="phone"
         type="tel"

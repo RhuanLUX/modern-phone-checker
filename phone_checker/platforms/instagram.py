@@ -1,7 +1,7 @@
-"""Vérificateur Instagram avec gestion intelligente des requêtes.
+"""Instagram Checker with intelligent request handling.
 
-Ce module vérifie si un numéro est associé à un compte Instagram en utilisant
-l'API publique de manière respectueuse et éthique.
+This module checks if a phone number is associated with an Instagram account
+by using the public API in a respectful and ethical way.
 """
 
 import httpx
@@ -20,26 +20,26 @@ class InstagramChecker:
             'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
         })
         self.timeout = httpx.Timeout(10.0)
-    
-    @rate_limit(calls=5, period=60)  # Plus restrictif car Instagram est sensible au rate limiting
+
+    @rate_limit(calls=5, period=60)  # More restrictive because Instagram is sensitive to rate limiting
     async def check(self, phone: str, country_code: str) -> PhoneCheckResult:
-        """Vérifie la présence d'un numéro sur Instagram.
-        
-        Cette méthode utilise l'API publique d'inscription d'Instagram pour
-        vérifier si un numéro est déjà associé à un compte.
-        
+        """Check if a number is associated with an Instagram account.
+
+        This method uses the public sign-up API from Instagram to check if
+        a number is already linked to an existing account.
+
         Args:
-            phone: Numéro sans l'indicatif pays
-            country_code: Indicatif pays (ex: '33' pour la France)
+            phone: Phone number without country code
+            country_code: Country code (e.g., '33' for France)
         """
         try:
             if not validate_phone_number(phone, country_code):
-                raise ValueError("Format de numéro invalide")
-            
+                raise ValueError("Invalid phone number format")
+
             clean_number = clean_phone_number(phone)
             full_number = f"+{country_code}{clean_number}"
-            
-            # On utilise l'endpoint de vérification du formulaire d'inscription
+
+            # Endpoint used for sign-up form validation
             url = "https://www.instagram.com/accounts/web_create_ajax/attempt/"
             data = {
                 'email': '',
@@ -48,54 +48,54 @@ class InstagramChecker:
                 'opt_into_one_tap': 'false',
                 'phone_number': full_number
             }
-            
-            # On ajoute des headers spécifiques pour ressembler à une requête légitime
+
+            # Add specific headers to mimic a legitimate request
             headers = {
-                'X-CSRFToken': 'missing',  # Instagram accepte 'missing' pour les requêtes non authentifiées
+                'X-CSRFToken': 'missing',  # Instagram accepts 'missing' for unauthenticated requests
                 'X-Instagram-AJAX': '1',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Referer': 'https://www.instagram.com/accounts/emailsignup/'
             }
-            
+
             response = await self.client.post(
                 url,
                 data=data,
                 headers=headers,
                 timeout=self.timeout
             )
-            
-            # Analyse de la réponse
+
+            # Response analysis
             result = response.json()
             exists = bool(result.get('errors', {}).get('phone_number'))
-            
+
             metadata = {
                 'status_code': response.status_code,
                 'response_type': 'account_exists' if exists else 'number_available'
             }
-            
+
             return PhoneCheckResult(
                 platform='instagram',
                 exists=exists,
                 metadata=metadata,
                 timestamp=datetime.now()
             )
-            
+
         except json.JSONDecodeError:
             return PhoneCheckResult(
                 platform='instagram',
                 exists=False,
-                error="Impossible d'analyser la réponse d'Instagram",
+                error="Failed to parse Instagram response",
                 timestamp=datetime.now()
             )
-            
+
         except httpx.TimeoutException:
             return PhoneCheckResult(
                 platform='instagram',
                 exists=False,
-                error="Délai d'attente dépassé",
+                error="Request timed out",
                 timestamp=datetime.now()
             )
-            
+
         except Exception as e:
             return PhoneCheckResult(
                 platform='instagram',

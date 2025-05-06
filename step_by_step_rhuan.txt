@@ -1,0 +1,44 @@
+Commands & Concepts Learned – May 5, 2025
+
+| Command                                              |                 Description                   |
+|------------------------------------------------------|-----------------------------------------------|
+| `python -m venv venv`                                | Creates the virtual environment.              |
+| `.\venv\Scripts\activate`                            | Activates the virtual environment on Windows. |
+| `pip install -r requirements.txt`                    | Installs the dependencies.                    |
+| `git config --global user.name "Your Name"`          | Sets the Git user name.                       |
+| `git config --global user.email "email@example.com"` | Sets the Git email address.                   |
+| `git add .`                                          | Stages all modified files for commit.         |
+| `git commit -m "message"`                            | Saves a commit with a message.                |
+| `git push origin main`                               | Sends the commits to GitHub.                  |
+
+---
+
+Commands & Concepts Learned – May 6, 2025
+
+✅ Terminal & Execution
+
+Running a Python module as a package:
+
+  `bash
+  python -m phone_checker check 612345678 --country 33
+  `
+Using CLI flags with Click:
+
+  `--country`: pass the country calling code
+  `--force-refresh`: bypasses cache and performs a fresh lookup
+
+🛠️ Module Structure & Fixes
+
+Fixed relative import errors by ensuring:
+
+  The folder is a proper Python module with `__init__.py`
+  The execution is done from the root level using `-m`
+Renamed the folder from `modern-phone-checker` to `modern_phone_checker` for Python compatibility
+
+📦 Python Concepts
+
+`@click.command()` and `@click.option()` decorators for CLI building
+`asyncio.run()` to execute asynchronous code in a synchronous CLI
+`Panel` and `Table` from `rich` for clean CLI visual output
+JSON serialization issues with `datetime` and how to convert using `.isoformat()`
+Smart caching strategy using freshness scores and expiration

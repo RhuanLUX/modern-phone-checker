@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-05-06T13:56:13.849807",
+  "results": {
+    "whatsapp": {
+      "platform": "whatsapp",
+      "exists": true,
+      "username": null,
+      "error": null,
+      "timestamp": "2025-05-06T13:56:13.087286",
+      "metadata": {
+        "status_code": 200,
+        "url": "https://api.whatsapp.com/send/?phone=33612345678&text&type=phone_number&app_absent=0&wame_ctl=1"
+      }
+    },
+    "telegram": {
+      "platform": "telegram",
+      "exists": false,
+      "username": null,
+      "error": null,
+      "timestamp": "2025-05-06T13:56:13.087309",
+      "metadata": null
+    },
+    "instagram": {
+      "platform": "instagram",
+      "exists": false,
+      "username": null,
+      "error": null,
+      "timestamp": "2025-05-06T13:56:13.849764",
+      "metadata": {
+        "status_code": 200,
+        "response_type": "number_available"
+      }
+    },
+    "snapchat": {
+      "platform": "snapchat",
+      "exists": false,
+      "username": null,
+      "error": null,
+      "timestamp": "2025-05-06T13:56:13.539645",
+      "metadata": {
+        "status_code": 302,
+        "verification_method": "signup_validation"
+      }
+    }
+  }
+}

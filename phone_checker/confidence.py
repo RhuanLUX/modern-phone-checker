@@ -1,7 +1,7 @@
-"""Système de score de confiance pour les vérifications.
+"""Confidence scoring system for verifications.
 
-Ce module implémente un système sophistiqué de scoring qui prend en compte
-plusieurs facteurs pour évaluer la fiabilité d'une vérification.
+This module implements a scoring system that considers 
+multiple factors to assess the reliability of a verification.
 """
 
 from datetime import datetime, timedelta
@@ -10,108 +10,102 @@ from dataclasses import dataclass
 
 @dataclass
 class PlatformReliability:
-    """Configuration de fiabilité pour une plateforme.
-    
+    """Reliability configuration for a platform.
+
     Attributes:
-        base_score: Score de base pour la plateforme (0.0 à 1.0)
-        api_timeouts: Nombre de timeouts récents
-        success_rate: Taux de succès des dernières vérifications
-        last_failure: Timestamp du dernier échec
+        base_score: Base score for the platform (0.0 to 1.0)
+        api_timeouts: Number of recent timeouts
+        success_rate: Success rate of recent verifications
+        last_failure: Timestamp of last failure
     """
-    base_score: float = 0.8  # Score par défaut
+    base_score: float = 0.8
     api_timeouts: int = 0
     success_rate: float = 1.0
     last_failure: Optional[datetime] = None
 
 class ConfidenceScorer:
-    """Calculateur de scores de confiance pour les vérifications."""
-    
+    """Confidence score calculator for verifications."""
+
     def __init__(self):
-        # Scores de base par plateforme basés sur la fiabilité historique
+        # Base scores for each platform based on historical reliability
         self.platform_scores = {
-            'whatsapp': PlatformReliability(base_score=0.9),   # Très fiable
-            'telegram': PlatformReliability(base_score=0.85),  # Fiable
-            'instagram': PlatformReliability(base_score=0.75), # Modérément fiable
-            'snapchat': PlatformReliability(base_score=0.7)    # Moins fiable
+            'whatsapp': PlatformReliability(base_score=0.9),   # Very reliable
+            'telegram': PlatformReliability(base_score=0.85),  # Reliable
+            'instagram': PlatformReliability(base_score=0.75), # Moderately reliable
+            'snapchat': PlatformReliability(base_score=0.7)    # Less reliable
         }
-        
-        # Facteurs de pondération pour différents aspects
+
+        # Weight factors for score components
         self.weights = {
-            'platform_reliability': 0.4,  # Fiabilité historique de la plateforme
-            'api_response': 0.3,         # Qualité de la réponse API
-            'cache_age': 0.3,           # Fraîcheur des données en cache
+            'platform_reliability': 0.4,
+            'api_response': 0.3,
+            'cache_age': 0.3,
         }
-    
+
     def calculate_api_response_score(self, status_code: int, response_time: float) -> float:
-        """Calcule un score basé sur la qualité de la réponse API.
-        
+        """Calculates a score based on API response quality.
+
         Args:
-            status_code: Code HTTP de la réponse
-            response_time: Temps de réponse en secondes
-            
+            status_code: HTTP status code of the response
+            response_time: Response time in seconds
+
         Returns:
-            Score entre 0.0 et 1.0
+            Score between 0.0 and 1.0
         """
-        # Score basé sur le status code
         if status_code == 200:
             status_score = 1.0
         elif status_code in (201, 202, 203):
             status_score = 0.9
-        elif status_code in (429, 503):  # Rate limiting ou service indisponible
+        elif status_code in (429, 503):
             status_score = 0.3
         else:
             status_score = 0.5
-            
-        # Score basé sur le temps de réponse (1.0 si <0.5s, 0.0 si >5s)
+
         time_score = max(0.0, min(1.0, (5.0 - response_time) / 4.5))
-        
         return (status_score * 0.7) + (time_score * 0.3)
-    
+
     def calculate_cache_age_score(self, timestamp: datetime) -> float:
-        """Calcule un score basé sur l'âge des données en cache.
-        
+        """Calculates a score based on cache age.
+
         Args:
-            timestamp: Date de la dernière vérification
-            
+            timestamp: Date of last verification
+
         Returns:
-            Score entre 0.0 et 1.0 (1.0 = très récent, 0.0 = très ancien)
+            Score between 0.0 and 1.0 (1.0 = very recent, 0.0 = very old)
         """
         age = (datetime.now() - timestamp).total_seconds()
-        
-        # Score dégressif sur 24 heures
-        max_age = 24 * 3600  # 24 heures en secondes
+        max_age = 24 * 3600  # 24 hours
         return max(0.0, 1.0 - (age / max_age))
-    
+
     def update_platform_reliability(
         self,
         platform: str,
         success: bool,
         response_time: Optional[float] = None
     ):
-        """Met à jour les statistiques de fiabilité d'une plateforme.
-        
+        """Updates reliability stats for a platform.
+
         Args:
-            platform: Nom de la plateforme
-            success: Si la vérification a réussi
-            response_time: Temps de réponse (optionnel)
+            platform: Platform name
+            success: Whether the check succeeded
+            response_time: Optional response time in seconds
         """
         if platform not in self.platform_scores:
             return
-            
+
         reliability = self.platform_scores[platform]
-        
-        # Met à jour le taux de succès (moyenne mobile sur les 100 dernières)
-        alpha = 0.01  # Facteur de lissage
+        alpha = 0.01  # Smoothing factor
+
         reliability.success_rate = (
             reliability.success_rate * (1 - alpha) +
             (1.0 if success else 0.0) * alpha
         )
-        
+
         if not success:
             reliability.last_failure = datetime.now()
             if response_time and response_time > 5.0:
                 reliability.api_timeouts += 1
-    
+
     def get_confidence_score(
         self,
         platform: str,
@@ -119,43 +113,40 @@ class ConfidenceScorer:
         response_time: float,
         cache_timestamp: Optional[datetime] = None
     ) -> float:
-        """Calcule le score de confiance global pour une vérification.
-        
+        """Computes the global confidence score of a verification.
+
         Args:
-            platform: Nom de la plateforme
-            status_code: Code HTTP de la réponse
-            response_time: Temps de réponse en secondes
-            cache_timestamp: Date de mise en cache (si applicable)
-            
+            platform: Platform name
+            status_code: HTTP response code
+            response_time: API response time
+            cache_timestamp: Optional cache timestamp
+
         Returns:
-            Score de confiance entre 0.0 et 1.0
+            Confidence score between 0.0 and 1.0
         """
-        # Score de fiabilité de la plateforme
         reliability = self.platform_scores.get(
             platform,
-            PlatformReliability()  # Valeurs par défaut pour plateformes inconnues
+            PlatformReliability()
         )
+
         platform_score = (
             reliability.base_score *
             reliability.success_rate *
-            (0.9 ** reliability.api_timeouts)  # Pénalité pour les timeouts
+            (0.9 ** reliability.api_timeouts)
         )
-        
-        # Score de la réponse API
+
         api_score = self.calculate_api_response_score(status_code, response_time)
-        
-        # Score de fraîcheur du cache
+
         cache_score = (
             self.calculate_cache_age_score(cache_timestamp)
             if cache_timestamp
-            else 1.0  # Données fraîches si pas de cache
+            else 1.0
         )
-        
-        # Score pondéré final
+
         final_score = (
             platform_score * self.weights['platform_reliability'] +
             api_score * self.weights['api_response'] +
             cache_score * self.weights['cache_age']
         )
-        
-        return round(final_score, 2)  # Arrondi à 2 décimales
+
+        return round(final_score, 2)

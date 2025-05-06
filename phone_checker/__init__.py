@@ -1,4 +1,4 @@
-"""Modern Phone Checker - Un vérificateur de numéros de téléphone moderne et éthique"""
+"""Modern Phone Checker - A modern and ethical phone number verification tool"""
 
 from .core import PhoneChecker
 from .models import PhoneCheckResult

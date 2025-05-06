@@ -1,7 +1,7 @@
-"""Vérificateur Snapchat avec gestion des sessions et des tokens.
+"""Snapchat Checker with session and token handling.
 
-Ce module vérifie l'existence d'un numéro sur Snapchat en utilisant
-l'API web publique de manière éthique.
+This module checks if a phone number exists on Snapchat using
+the public web API in an ethical manner.
 """
 
 import httpx
@@ -19,93 +19,91 @@ class SnapchatChecker:
             'Accept': 'application/json',
             'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
         })
-        self.timeout = httpx.Timeout(15.0)  # Timeout plus long car Snapchat peut être lent
-        
+        self.timeout = httpx.Timeout(15.0)  # Longer timeout as Snapchat may be slow
+
     async def _get_web_token(self) -> Optional[str]:
-        """Récupère un token temporaire pour l'API web de Snapchat."""
+        """Retrieve a temporary token for Snapchat's web API."""
         try:
             response = await self.client.get(
                 'https://accounts.snapchat.com/accounts/signup',
                 timeout=self.timeout
             )
-            # Le token est dans une balise meta ou dans un script JS
-            # Cette partie est simplifiée, en réalité il faudrait parser le HTML
+            # The token is normally inside a meta tag or a JS script
+            # This is simplified; proper HTML parsing would be required
             return 'xsrf-token'
         except Exception:
             return None
-    
-    @rate_limit(calls=3, period=60)  # Très restrictif pour éviter les blocages
+
+    @rate_limit(calls=3, period=60)  # Very restrictive to avoid blocking
     async def check(self, phone: str, country_code: str) -> PhoneCheckResult:
-        """Vérifie si un numéro est associé à un compte Snapchat.
-        
-        Cette méthode utilise l'API de vérification de connexion de Snapchat
-        pour déterminer si un numéro est déjà utilisé.
-        
+        """Check if a phone number is associated with a Snapchat account.
+
+        This method uses Snapchat’s account validation API
+        to determine whether the number is already in use.
+
         Args:
-            phone: Numéro sans l'indicatif pays
-            country_code: Indicatif pays (ex: '33' pour la France)
+            phone: Phone number without country code
+            country_code: Country code (e.g., '33' for France)
         """
         try:
             if not validate_phone_number(phone, country_code):
-                raise ValueError("Format de numéro invalide")
-            
+                raise ValueError("Invalid phone number format")
+
             clean_number = clean_phone_number(phone)
             full_number = f"+{country_code}{clean_number}"
-            
-            # Récupération du token (dans un vrai scénario)
+
             token = await self._get_web_token()
             if not token:
                 return PhoneCheckResult(
                     platform='snapchat',
                     exists=False,
-                    error="Impossible d'obtenir un token d'accès",
+                    error="Unable to retrieve access token",
                     timestamp=datetime.now()
                 )
-            
-            # Requête de vérification
+
             url = "https://accounts.snapchat.com/accounts/validate_phone_number"
             data = {
                 'phone_country_code': country_code,
                 'phone_number': clean_number,
                 'xsrf_token': token
             }
-            
+
             headers = {
                 'X-XSRF-TOKEN': token,
                 'Referer': 'https://accounts.snapchat.com/accounts/signup',
             }
-            
+
             response = await self.client.post(
                 url,
                 json=data,
                 headers=headers,
                 timeout=self.timeout
             )
-            
-            # Dans un cas réel, on analyserait la réponse de l'API
-            # Ici on simule une vérification basique
-            exists = response.status_code == 400  # Sur Snapchat, 400 indique souvent un numéro déjà utilisé
-            
+
+            # In a real case, we would analyze the actual response
+            # Here we simulate with a basic check
+            exists = response.status_code == 400  # On Snapchat, 400 often means the number is in use
+
             metadata = {
                 'status_code': response.status_code,
                 'verification_method': 'signup_validation'
             }
-            
+
             return PhoneCheckResult(
                 platform='snapchat',
                 exists=exists,
                 metadata=metadata,
                 timestamp=datetime.now()
             )
-            
+
         except httpx.TimeoutException:
             return PhoneCheckResult(
                 platform='snapchat',
                 exists=False,
-                error="Délai d'attente dépassé",
+                error="Request timed out",
                 timestamp=datetime.now()
             )
-            
+
         except Exception as e:
             return PhoneCheckResult(
                 platform='snapchat',

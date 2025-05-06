@@ -1,7 +1,7 @@
-"""Package contenant les vérificateurs spécifiques à chaque plateforme.
+"""Package containing platform-specific checkers.
 
-Chaque module dans ce package implémente la logique de vérification
-pour une plateforme spécifique.
+Each module in this package implements the verification logic
+for a specific platform.
 """
 
 from .whatsapp import WhatsAppChecker
@@ -9,7 +9,7 @@ from .telegram import TelegramChecker
 from .instagram import InstagramChecker
 from .snapchat import SnapchatChecker
 
-# Mapping des vérificateurs disponibles
+# Mapping of available checkers
 AVAILABLE_CHECKERS = {
     'whatsapp': WhatsAppChecker,
     'telegram': TelegramChecker,
@@ -17,5 +17,5 @@ AVAILABLE_CHECKERS = {
     'snapchat': SnapchatChecker,
 }
 
-# Liste des plateformes activées par défaut
+# List of default enabled platforms
 DEFAULT_PLATFORMS = ['whatsapp', 'telegram', 'instagram', 'snapchat']

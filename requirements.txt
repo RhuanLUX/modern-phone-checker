@@ -1,27 +1,27 @@
-# Dépendances principales
+# Main Dependencies
 httpx==0.24.1
 aiohttp==3.9.1
 aiofiles==23.2.1
 
-# Pour le cache et le stockage
+# For Cache and Storage
 aiohttp-client-cache==0.8.2
 
-# Interface en ligne de commande
+#Command-Line Interface
 click==8.1.7
 
-# Validation des données
+# Data Validation
 pydantic==1.10.13
-# pydantic==2.4.2 Revoved for now, as it is not compatible!
+# Note: pydantic==2.4.2 Removed for now, as it is not compatible!
 typing-extensions==4.8.0
 
-# Affichage console
+# Console Display
 rich==13.7.0
 
-# Tests
+# Testing
 pytest==7.4.0
 pytest-asyncio==0.21.1
 pytest-cov==4.1.0
 
-# Utilitaires
+# Utilities
 python-dateutil==2.9.0
 tenacity==8.2.3

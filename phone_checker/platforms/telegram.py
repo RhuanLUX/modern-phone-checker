@@ -1,7 +1,7 @@
-"""Vérificateur spécifique pour Telegram.
+"""Specific checker for Telegram.
 
-Ce module implémente la vérification des numéros sur Telegram
-en utilisant l'API officielle de Telegram.
+This module implements phone number verification for Telegram
+using Telegram’s official API.
 """
 
 import httpx
@@ -11,40 +11,40 @@ from ..models import PhoneCheckResult
 
 class TelegramChecker:
     def __init__(self, client: Optional[httpx.AsyncClient] = None):
-        """Initialise le vérificateur Telegram.
+        """Initialize the Telegram checker.
         
         Args:
-            client: Client HTTP asyncrone optionnel
+            client: Optional asynchronous HTTP client
         """
         self.client = client or httpx.AsyncClient()
         self.api_url = "https://api.telegram.org"
-        
+
     async def check(self, phone: str, country_code: str) -> PhoneCheckResult:
-        """Vérifie si un numéro est présent sur Telegram.
+        """Check if a phone number exists on Telegram.
         
-        Utilise des méthodes publiques de l'API Telegram pour vérifier
-        l'existence d'un compte, sans envoyer de notifications.
+        Uses Telegram's public methods to verify the account existence,
+        without triggering notifications.
         
         Args:
-            phone: Numéro sans l'indicatif pays
-            country_code: Indicatif pays (ex: '33' pour la France)
+            phone: Phone number without country code
+            country_code: Country code (e.g., '33' for France)
             
         Returns:
-            PhoneCheckResult avec les détails de la vérification
+            PhoneCheckResult with the verification details
         """
         try:
             full_number = f"+{country_code}{phone}"
             
-            # TODO: Implémenter la vraie logique de vérification
-            # Utiliser l'API Telegram de manière éthique
-            exists = False  # À remplacer par la vraie vérification
+            # TODO: Implement real verification logic
+            # Use Telegram's API ethically
+            exists = False  # To be replaced with real verification
             
             return PhoneCheckResult(
                 platform='telegram',
                 exists=exists,
                 timestamp=datetime.now()
             )
-            
+
         except Exception as e:
             return PhoneCheckResult(
                 platform='telegram',
