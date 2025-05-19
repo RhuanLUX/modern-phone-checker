@@ -19,5 +19,5 @@
 
 ## ✅ Other Tools
 - Git + GitHub for version control
-- Visual Studio Code
+- VS Code
 - Virtual environment for dependency isolation

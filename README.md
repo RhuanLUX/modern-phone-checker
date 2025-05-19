@@ -95,3 +95,127 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 ## 📝 Licence
 
 MIT License - © 2025 nabz0r
+
+----------------------------------------------------------------------------------- by @ Rhuan
+
+# Modern Phone Checker
+
+Check phone numbers and email addresses across popular social platforms from the command line, with caching and a mock monetization flow.
+
+---
+
+Features
+
+✅ Phone lookup on WhatsApp, Telegram, Instagram, and Snapchat
+📧 Email validation (syntax + MX lookup)
+💾 **Async cache (configurable expiration)
+🔒 Mock monetization: free vs. paid flows via `--api-key`
+🚀 Rich CLI output with tables, panels, and status indicators
+🔧 Fully typed with dataclasses, MyPy-compatible
+
+---
+
+## Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/your-org/modern_phone_checker.git
+cd modern_phone_checker
+
+# Create and activate a virtual environment
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# Linux / macOS
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+# Install the package in editable mode
+pip install -e .
+```
+
+Or install from PyPI:
+
+```bash
+pip install modern_phone_checker
+```
+
+---
+
+## Usage
+
+```bash
+modern-phone-checker --help
+```
+
+### Checking a phone number (Free)
+
+By default, only **WhatsApp** and **Telegram** checks run without an API key:
+
+```bash
+modern-phone-checker check --phone 612345678
+```
+
+### Checking with a specific country code
+
+Default country code is **33 (France)**. To check Luxembourg or Brazil:
+
+```bash
+modern-phone-checker check --phone 691234567 --country 352  # Luxembourg
+modern-phone-checker check --phone 11999998888 --country 55  # Brazil
+```
+
+### Premium flow (all platforms + email)
+
+Provide an API key to unlock all checks (Instagram, Snapchat, Email):
+
+```bash
+modern-phone-checker check \
+  --phone 612345678 \
+  --email example@domain.com \
+  --api-key YOUR_KEY_HERE
+```
+
+### Force refresh (ignore cache)
+
+```bash
+modern-phone-checker check --phone 612345678 --force-refresh
+```
+
+### Custom cache expiration
+
+```bash
+modern-phone-checker check --phone 612345678 --cache-expire 600
+```
+
+---
+
+## Options
+
+| Flag              | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| `--phone`         | Phone number in E.164 or national format           |
+| `--email`         | Email address to check                             |
+| `--country, -c`   | Country code (default: 33 for France)              |
+| `--api-key`       | Enable premium checks (Instagram, Snapchat, Email) |
+| `--force-refresh` | Ignore cache and run fresh verification            |
+| `--cache-expire`  | Cache TTL in seconds (default: 3600)               |
+| `--help`          | Show help message                                  |
+
+---
+
+## Contributing
+
+Feel free to open issues or pull requests. For development:
+
+```bash
+# run tests
+gpytest -q
+```
+
+---
+
+## License
+
+MIT © Rhuan Pablo da Silva

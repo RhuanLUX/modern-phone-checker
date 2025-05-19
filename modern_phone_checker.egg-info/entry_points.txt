@@ -1,0 +1,2 @@
+[console_scripts]
+modern-phone-checker = modern_phone_checker.__main__:cli

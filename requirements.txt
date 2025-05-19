@@ -25,3 +25,21 @@ pytest-cov==4.1.0
 # Utilities
 python-dateutil==2.9.0
 tenacity==8.2.3
+
+# For Caching
+httpx>=0.24.0
+
+# For File Handling
+aiofiles>=23.2.1
+
+# For Console Display
+click>=8.1.7 
+rich>=13.0.0
+
+pytest
+pytest-asyncio
+click
+pytest-mock
+
+
+

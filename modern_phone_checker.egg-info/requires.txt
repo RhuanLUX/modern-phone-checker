@@ -1,0 +1,7 @@
+click>=8.0
+rich>=13.0
+httpx>=0.24
+aiohttp-client-cache>=0.8.2
+aiofiles>=23.2.1
+dnspython>=2.7.0
+phonenumbers>=8.12.55
