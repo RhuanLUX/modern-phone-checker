@@ -1,17 +1,18 @@
 """Smart caching system for phone number verifications.
 
-This module temporarily stores verification results to avoid 
-sending too many API requests. It uses a freshness score to 
+This module temporarily stores verification results to avoid
+sending too many API requests. It uses a freshness score to
 decide when to refresh the data.
 """
 
-from datetime import datetime, timedelta
 import json
+from datetime import datetime
 from typing import Optional, Dict, Any
 from pathlib import Path
 import aiofiles
 import aiofiles.os
 from .models import PhoneCheckResult
+
 
 class CacheManager:
     def __init__(self, cache_dir: str = '.cache', expire_after: int = 3600):
@@ -58,7 +59,11 @@ class CacheManager:
         age = (datetime.now() - timestamp).total_seconds()
         return max(0.0, 1.0 - (age / self.expire_after))
 
-    async def get(self, phone: str, country_code: str) -> Optional[Dict[str, PhoneCheckResult]]:
+    async def get(
+        self,
+        phone: str,
+        country_code: str
+    ) -> Optional[Dict[str, PhoneCheckResult]]:
         """Retrieve cached results for a phone number.
 
         Returns:
@@ -84,7 +89,12 @@ class CacheManager:
         }
         return cached_data
 
-    async def set(self, phone: str, country_code: str, results: Dict[str, PhoneCheckResult]):
+    async def set(
+        self,
+        phone: str,
+        country_code: str,
+        results: Dict[str, PhoneCheckResult]
+    ):
         """Store verification results in cache for a phone number."""
         cache_key = f"{country_code}_{phone}"
         serializable_results = {}
@@ -95,7 +105,10 @@ class CacheManager:
                 "exists": result.exists,
                 "username": result.username,
                 "error": result.error,
-                "timestamp": result.timestamp.isoformat() if result.timestamp else None,
+                "timestamp": (
+                    result.timestamp.isoformat()
+                    if result.timestamp else None
+                ),
                 "metadata": result.metadata,
             }
 

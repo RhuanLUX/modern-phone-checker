@@ -1,6 +1,6 @@
-# modern_phone_checker/platforms/instagram.py
 from .base import BaseChecker
 from ..models import PhoneCheckResult
+
 
 class InstagramChecker(BaseChecker):
     """Checker for Instagram profiles."""

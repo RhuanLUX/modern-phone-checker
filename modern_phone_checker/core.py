@@ -1,4 +1,3 @@
-# modern_phone_checker/core.py
 """Main module of the phone number checker with cache management.
 
 This module coordinates the platform-specific checkers and handles
@@ -8,7 +7,6 @@ the core logic of the application, including the caching system.
 import asyncio
 from typing import List, Optional, Dict, Any
 import httpx
-from datetime import datetime
 
 from .models import PhoneCheckResult
 from .platforms import AVAILABLE_CHECKERS, DEFAULT_PLATFORMS

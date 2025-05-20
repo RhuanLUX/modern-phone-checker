@@ -1,13 +1,14 @@
-# tests/test_cli.py
 import pytest
 from datetime import datetime
 from click.testing import CliRunner
 
 from modern_phone_checker.__main__ import cli
 
+
 @pytest.fixture
 def runner():
     return CliRunner()
+
 
 def test_check_help_shows_options(runner):
     # Check help for the "check" subcommand, where --phone/--email live
@@ -17,11 +18,13 @@ def test_check_help_shows_options(runner):
     assert "--email" in result.output
     assert "--api-key" in result.output
 
+
 def test_help_shows_commands(runner):
     # The top-level help should list the "check" command
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert "check" in result.output
+
 
 def test_check_phone_only(runner, monkeypatch):
     # Dummy PhoneChecker that accepts any kwargs
@@ -55,6 +58,7 @@ def test_check_phone_only(runner, monkeypatch):
     assert result.exit_code == 0
     # Our dummy platform should appear
     assert "DUMMY" in result.output
+
 
 def test_check_email_only(runner, monkeypatch):
     # Dummy EmailChecker that accepts any kwargs

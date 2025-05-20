@@ -1,4 +1,3 @@
-# modern_phone_checker/email_checker.py
 """EmailChecker: syntax + MX record validation returning PhoneCheckResult."""
 
 import re
@@ -7,6 +6,7 @@ from datetime import datetime
 
 from .models import PhoneCheckResult
 
+
 class EmailChecker:
     """Checks an email address for valid syntax and MX records."""
 
@@ -14,10 +14,10 @@ class EmailChecker:
         """
         Args:
             api_key: Optional API key for premium email-verification services.
-            cache:   Optional CacheManager (not used in this simple checker).
+            cache: Optional CacheManager (not used in this simple checker).
         """
         self.api_key = api_key
-        self.cache   = cache
+        self.cache = cache
 
     def check(self, email: str) -> PhoneCheckResult:
         """

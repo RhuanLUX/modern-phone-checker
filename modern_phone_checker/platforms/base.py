@@ -1,8 +1,8 @@
-# modern_phone_checker/platforms/base.py
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Optional, Dict, Any
 from ..models import PhoneCheckResult
+
 
 class BaseChecker(ABC):
     def __init__(self, client, api_key: Optional[str] = None, cache=None):
@@ -10,13 +10,13 @@ class BaseChecker(ABC):
         Base class initializer for all platform checkers.
 
         Args:
-            client:    an httpx.AsyncClient instance
-            api_key:   optional API key for premium endpoints
-            cache:     optional CacheManager for storing results
+            client: an httpx.AsyncClient instance
+            api_key: optional API key for premium endpoints
+            cache: optional CacheManager for storing results
         """
-        self.client  = client
+        self.client = client
         self.api_key = api_key
-        self.cache   = cache
+        self.cache = cache
 
     @abstractmethod
     async def check(self, phone: str, country_code: str) -> PhoneCheckResult:

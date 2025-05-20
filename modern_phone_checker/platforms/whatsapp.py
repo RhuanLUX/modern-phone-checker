@@ -1,6 +1,6 @@
-# modern_phone_checker/platforms/whatsapp.py
 from .base import BaseChecker
 from ..models import PhoneCheckResult
+
 
 class WhatsAppChecker(BaseChecker):
     """Checker for WhatsApp profiles."""
@@ -23,7 +23,10 @@ class WhatsAppChecker(BaseChecker):
         params = {"phone": f"+{country_code}{phone}"}
         try:
             resp = await self.client.get(self.endpoint, params=params)
-            exists = resp.status_code == 200 and resp.json().get("exists", False)
+            exists = (
+                resp.status_code == 200 and
+                resp.json().get("exists", False)
+            )
             return self.create_result(
                 platform="whatsapp",
                 exists=exists,

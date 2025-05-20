@@ -1,5 +1,3 @@
-# tests/test_phone_checker.py
-import asyncio
 import pytest
 from datetime import datetime
 
@@ -38,7 +36,9 @@ def register_dummy():
 async def test_check_number_without_cache():
     # use a valid French national number (612345678) instead of "123"
     checker = PhoneChecker(platforms=["dummy"], use_cache=False)
-    results = await checker.check_number("612345678", "33", force_refresh=False)
+    results = await checker.check_number(
+        "612345678", "33", force_refresh=False
+    )
     assert isinstance(results, list)
     assert len(results) == 1
     r = results[0]
@@ -59,18 +59,24 @@ async def test_check_number_with_cache(tmp_path, monkeypatch):
     await checker.initialize()
 
     # first call — writes to cache
-    results1 = await checker.check_number("612345678", "33", force_refresh=False)
+    results1 = await checker.check_number(
+        "612345678", "33", force_refresh=False
+    )
     assert len(results1) == 1
 
     # now patch DummyChecker.check to ensure cache is used
     monkeypatch.setattr(
         DummyChecker,
         "check",
-        lambda *args, **kwargs: (_ for _ in ()).throw(Exception("DummyChecker.check should NOT be called"))
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            Exception("DummyChecker.check should NOT be called")
+        )
     )
 
     # second call — should come from cache
-    results2 = await checker.check_number("612345678", "33", force_refresh=False)
+    results2 = await checker.check_number(
+        "612345678", "33", force_refresh=False
+    )
     assert len(results2) == 1
     assert results2[0].metadata.get("cached") is True
 

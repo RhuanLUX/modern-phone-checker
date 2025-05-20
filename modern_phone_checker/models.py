@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Optional, Dict, Any
 from datetime import datetime
 
+
 @dataclass
 class PhoneCheckResult:
     """Result of a phone number check on a specific platform.
