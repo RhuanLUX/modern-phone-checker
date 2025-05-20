@@ -1,20 +1,19 @@
-# modern_phone_checker/__main__.py
 """Command-line interface with enhanced display and mock monetization."""
 
 import asyncio
+from datetime import datetime
+
 import click
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich import box
-from datetime import datetime
 
 from .core import PhoneChecker
 from .email_checker import EmailChecker
 from .cache import CacheManager
 from .platforms import DEFAULT_PLATFORMS
 from .utils import validate_phone_number
-
 
 console = Console()
 FREE_PHONE_PLATFORMS = ["whatsapp", "telegram"]
@@ -73,14 +72,12 @@ def cli():
 @click.option(
     "--phone",
     default=None,
-    help="Phone number in E.164 format "
-    "(e.g., +5511999998888).",
+    help="Phone number in E.164 format (e.g., +5511999998888).",
 )
 @click.option(
     "--email",
     default=None,
-    help="Email address to check "
-    "(e.g., example@domain.com).",
+    help="Email address to check (e.g., example@domain.com).",
 )
 @click.option(
     "--api-key",
@@ -120,7 +117,7 @@ def check(
     """
 
     async def run():
-        # 1) Input validation
+        # Input validation
         if phone and not validate_phone_number(phone, country):
             console.print(
                 Panel(
@@ -132,21 +129,23 @@ def check(
             return
 
         if not phone and not email:
-            console.print("[red]Error: please provide --phone or --email[/]")
+            console.print(
+                "[red]Error: please provide --phone or --email[/]"
+            )
             raise click.UsageError("Use --phone or --email")
 
-        # 2) Choose platforms based on api_key
+        # Choose platforms based on api_key
         if api_key:
             phone_platforms = DEFAULT_PLATFORMS
         else:
             phone_platforms = FREE_PHONE_PLATFORMS
 
-        # 3) Initialize cache
+        # Initialize cache
         cache = CacheManager(expire_after=cache_expire)
         results = []
 
         with console.status("[bold blue]Checking in progress..."):
-            # 4) Phone checks
+            # Phone checks
             if phone:
                 checker = PhoneChecker(
                     api_key=api_key,
@@ -162,21 +161,22 @@ def check(
                 )
                 await checker.close()
 
-            # 5) Email check (premium only)
+            # Email check (premium only)
             if email:
                 if not api_key:
                     console.print(
-                        "[yellow]Skipping email check; "
-                        "--api-key required for email verification.[/]"
+                        "[yellow]Email checking requires an API key. "
+                        "Skipping email check.[/yellow]"
                     )
                 else:
                     email_checker = EmailChecker(
                         api_key=api_key,
                         cache=cache,
                     )
-                    results.append(email_checker.check(email))
+                    email_result = await email_checker.check(email)
+                    results.append(email_result)
 
-        # 6) Display results
+        # Display results
         console.print("\n")
         target = phone if phone else email
         console.print(
@@ -185,7 +185,10 @@ def check(
                 style="cyan",
             )
         )
-        console.print(create_result_table(results))
+        if results:
+            console.print(create_result_table(results))
+        else:
+            console.print("[yellow]No results to display.[/]")
 
     asyncio.run(run())
 

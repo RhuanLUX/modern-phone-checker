@@ -4,34 +4,26 @@ from click.testing import CliRunner
 
 from modern_phone_checker.__main__ import cli
 
-
 @pytest.fixture
 def runner():
     return CliRunner()
 
-
 def test_check_help_shows_options(runner):
-    # Check help for the "check" subcommand, where --phone/--email live
     result = runner.invoke(cli, ["check", "--help"])
     assert result.exit_code == 0
     assert "--phone" in result.output
     assert "--email" in result.output
     assert "--api-key" in result.output
 
-
 def test_help_shows_commands(runner):
-    # The top-level help should list the "check" command
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert "check" in result.output
 
-
 def test_check_phone_only(runner, monkeypatch):
-    # Dummy PhoneChecker that accepts any kwargs
     class DummyChecker:
         def __init__(self, *args, **kwargs):
             pass
-
         async def check_number(self, phone, country, force_refresh=False):
             from modern_phone_checker.models import PhoneCheckResult
             return [
@@ -44,11 +36,9 @@ def test_check_phone_only(runner, monkeypatch):
                     timestamp=datetime(2025, 1, 1, 0, 0, 0),
                 )
             ]
-
         async def close(self):
             pass
 
-    # Swap out the real PhoneChecker
     monkeypatch.setattr(
         "modern_phone_checker.__main__.PhoneChecker",
         DummyChecker
@@ -56,17 +46,13 @@ def test_check_phone_only(runner, monkeypatch):
 
     result = runner.invoke(cli, ["check", "--phone", "612345678"])
     assert result.exit_code == 0
-    # Our dummy platform should appear
     assert "DUMMY" in result.output
 
-
 def test_check_email_only(runner, monkeypatch):
-    # Dummy EmailChecker that accepts any kwargs
     class DummyEmail:
         def __init__(self, *args, **kwargs):
             pass
-
-        def check(self, email):
+        async def check(self, email):
             from modern_phone_checker.models import PhoneCheckResult
             return PhoneCheckResult(
                 platform="email",
@@ -77,7 +63,6 @@ def test_check_email_only(runner, monkeypatch):
                 timestamp=datetime(2025, 1, 1, 0, 0, 0),
             )
 
-    # Swap out the real EmailChecker
     monkeypatch.setattr(
         "modern_phone_checker.__main__.EmailChecker",
         DummyEmail
@@ -90,3 +75,15 @@ def test_check_email_only(runner, monkeypatch):
     assert result.exit_code == 0
     assert "EMAIL" in result.output
     assert "valid_syntax" in result.output
+
+def test_check_email_without_api_key(runner):
+    """Should show warning and skip email check if no API key."""
+    result = runner.invoke(
+        cli,
+        ["check", "--email", "example@domain.com"]
+    )
+    assert result.exit_code == 0
+    assert (
+        "Email checking requires an API key. Skipping email check."
+        in result.output
+    )
